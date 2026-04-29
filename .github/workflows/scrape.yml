@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # برای pull/rebase بهتر
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -30,6 +32,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main || echo "No rebase needed"
           git add slipnet_output.txt
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update SlipNet.txt [skip ci]"
-          git push
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update SlipNet.txt [skip ci]"
+            git push origin main --force-with-lease
+          fi
