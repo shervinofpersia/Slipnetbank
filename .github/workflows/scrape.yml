@@ -1,9 +1,9 @@
-name: SlipNet Collector
+name: SlipNet Collector (TXT)
 
 on:
   schedule:
-    - cron: '*/30 * * * *'   # هر 30 دقیقه
-  workflow_dispatch:          # اجرای دستی از گیت‌هاب
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -26,10 +26,10 @@ jobs:
       - name: Run SlipNet collector
         run: python scraper.py
 
-      - name: Commit and push changes
+      - name: Commit and push output
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html slipnet_db.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update slipnet configs [skip ci]"
+          git add slipnet_output.txt
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update SlipNet.txt [skip ci]"
           git push
